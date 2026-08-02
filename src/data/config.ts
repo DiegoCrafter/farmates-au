@@ -1,31 +1,16 @@
-export interface DonationOption {
+export interface DonationUrl {
   id: string;
-  name: string;
   url: string;
-  note: string;
 }
 
 /**
  * Enlaces de donación. Reemplaza los valores "TU_USUARIO" por tus propios
  * enlaces de PayPal, Ko-fi o Buy Me a Coffee.
+ * Los nombres y descripciones visibles se traducen en src/i18n/translations.ts
+ * (clave `donateOptions`), usando el mismo `id`.
  */
-export const DONATION_LINKS: DonationOption[] = [
-  {
-    id: 'paypal',
-    name: 'PayPal',
-    url: 'https://www.paypal.me/TU_USUARIO',
-    note: 'Transferencia rápida desde cualquier país. Ideal para montos únicos de cualquier valor.',
-  },
-  {
-    id: 'kofi',
-    name: 'Ko-fi',
-    url: 'https://ko-fi.com/TU_USUARIO',
-    note: 'Página de apoyo con montos fijos. Opción muy popular entre creadores independientes.',
-  },
-  {
-    id: 'bmac',
-    name: 'Buy Me a Coffee',
-    url: 'https://www.buymeacoffee.com/TU_USUARIO',
-    note: 'Una forma simbólica y simple de invitar un café al proyecto.',
-  },
+export const DONATION_URLS: DonationUrl[] = [
+  { id: 'paypal', url: 'https://www.paypal.me/TU_USUARIO' },
+  { id: 'kofi', url: 'https://ko-fi.com/TU_USUARIO' },
+  { id: 'bmac', url: 'https://www.buymeacoffee.com/TU_USUARIO' },
 ];

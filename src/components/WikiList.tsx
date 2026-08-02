@@ -1,4 +1,5 @@
 import { JobListing } from '../data/types';
+import { useI18n } from '../i18n/LanguageContext';
 import JobCard from './JobCard';
 
 export default function WikiList({
@@ -8,13 +9,9 @@ export default function WikiList({
   jobs: JobListing[];
   onSelect: (j: JobListing) => void;
 }) {
+  const { t } = useI18n();
   if (jobs.length === 0) {
-    return (
-      <div className="empty">
-        No hay trabajos que coincidan con los filtros. Prueba con otro mes, estado o tipo de
-        trabajo.
-      </div>
-    );
+    return <div className="empty">{t('wiki.empty')}</div>;
   }
   return (
     <div className="card-grid">

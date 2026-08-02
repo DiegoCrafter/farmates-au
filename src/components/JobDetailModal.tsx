@@ -14,14 +14,8 @@ import {
   Trash2,
   X,
 } from 'lucide-react';
-import {
-  JobListing,
-  MONTHS_SHORT,
-  STATE_NAMES,
-  WORK_TYPE_LABELS,
-  inSeason,
-  monthRangeLabel,
-} from '../data/types';
+import { JobListing, inSeason } from '../data/types';
+import { useI18n } from '../i18n/LanguageContext';
 
 export default function JobDetailModal({
   job,
@@ -32,6 +26,17 @@ export default function JobDetailModal({
   onClose: () => void;
   onDelete?: () => void;
 }) {
+  const {
+    t,
+    monthsShort,
+    stateNames,
+    workTypeLabels,
+    monthRangeLabel,
+    localizedName,
+    localizedDescription,
+    localizedAccommodation,
+  } = useI18n();
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -46,53 +51,53 @@ export default function JobDetailModal({
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose} aria-label="Cerrar">
+        <button className="modal-close" onClick={onClose} aria-label={t('modal.close')}>
           <X size={18} />
         </button>
 
-        <h2>{job.name}</h2>
+        <h2>{localizedName(job)}</h2>
         <p className="meta-line">
-          <MapPin size={14} /> {job.town}, {job.state} · {STATE_NAMES[job.state]}
+          <MapPin size={14} /> {job.town}, {job.state} · {stateNames[job.state]}
         </p>
         <p className="meta-line">
-          <CalendarDays size={14} /> Temporada: {monthRangeLabel(job)}
+          <CalendarDays size={14} /> {t('map.popupSeason', { label: monthRangeLabel(job) })}
         </p>
         <div className="card-tags" style={{ marginTop: 8 }}>
           {job.verified ? (
             <span className="chip chip-ok">
-              <BadgeCheck size={13} /> Contacto verificado
+              <BadgeCheck size={13} /> {t('modal.verified')}
             </span>
           ) : (
-            <span className="chip chip-warn">Contacto aún no verificado</span>
+            <span className="chip chip-warn">{t('modal.unverified')}</span>
           )}
-          {job.specifiedWork && <span className="chip chip-spec">Cuenta como trabajo especificado (visa)</span>}
+          {job.specifiedWork && <span className="chip chip-spec">{t('modal.spec')}</span>}
           {job.workTypes.map((w) => (
             <span key={w} className="chip chip-work">
-              {WORK_TYPE_LABELS[w]}
+              {workTypeLabels[w]}
             </span>
           ))}
         </div>
 
         <div className="modal-section">
-          <h4>Temporada mes a mes</h4>
+          <h4>{t('modal.seasonTitle')}</h4>
           <div className="sdot-row">
-            {MONTHS_SHORT.map((m, i) => (
+            {monthsShort.map((m, i) => (
               <div
                 key={m}
                 className={`sdot ${inSeason(job, i) ? 'on' : ''} ${i === nowMonth ? 'now' : ''}`}
-                title={`${m}${i === nowMonth ? ' (este mes)' : ''}`}
+                title={i === nowMonth ? t('modal.nowMonth', { m }) : m}
               >
                 {m}
               </div>
             ))}
           </div>
           <p style={{ fontSize: '0.78rem', color: 'var(--muted)', margin: '8px 0 0' }}>
-            Los meses en verde son temporada. El marco ámbar marca el mes actual.
+            {t('modal.seasonHint')}
           </p>
         </div>
 
         <div className="modal-section">
-          <h4>Contacto</h4>
+          <h4>{t('modal.contactTitle')}</h4>
           <div className="contact-btns">
             {contact.phone && (
               <a href={`tel:${contact.phone.replace(/[^+\d]/g, '')}`}>
@@ -101,7 +106,7 @@ export default function JobDetailModal({
             )}
             {contact.email && (
               <a href={`mailto:${contact.email}`} className={contact.phone ? 'ghost' : ''}>
-                <Mail size={16} /> Escribir email
+                <Mail size={16} /> {t('modal.emailBtn')}
               </a>
             )}
             {contact.website && (
@@ -111,47 +116,47 @@ export default function JobDetailModal({
                 rel="noreferrer"
                 className={contact.phone || contact.email ? 'ghost' : ''}
               >
-                <Globe size={16} /> Sitio / portal <ExternalLink size={13} />
+                <Globe size={16} /> {t('modal.siteBtn')} <ExternalLink size={13} />
               </a>
             )}
           </div>
           {contact.harvestOffice && (
             <p className="form-note" style={{ marginTop: 12 }}>
-              <Info size={14} /> Esta es una oficina oficial de empleo agrícola (gratuita). No
-              cobran por inscribirte ni por conseguirte trabajo.
+              <Info size={14} /> {t('modal.harvestOffice')}
             </p>
           )}
           {!job.verified && (
             <p className="note-warn" style={{ marginTop: 12 }}>
-              <AlertTriangle size={16} /> Este contacto no ha sido confirmado por la comunidad.
-              Llama o escribe para verificar antes de hacer planes.
+              <AlertTriangle size={16} /> {t('modal.unverifiedNote')}
             </p>
           )}
         </div>
 
         <div className="modal-section">
-          <h4>Descripción</h4>
-          <p style={{ margin: 0 }}>{job.description}</p>
+          <h4>{t('modal.descTitle')}</h4>
+          <p style={{ margin: 0 }}>{localizedDescription(job)}</p>
           <p style={{ margin: '10px 0 0', fontSize: '0.9rem' }}>
-            <BedDouble size={14} style={{ verticalAlign: '-2px' }} /> Alojamiento típico:{' '}
-            <strong>{job.accommodation}</strong>
+            <BedDouble size={14} style={{ verticalAlign: '-2px' }} /> {t('modal.accommodation')}
+            <strong>{localizedAccommodation(job)}</strong>
           </p>
           {job.specifiedWork && (
             <p style={{ margin: '10px 0 0', fontSize: '0.9rem' }}>
-              <ShieldCheck size={14} style={{ verticalAlign: '-2px' }} /> Cuenta como specified
-              work para renovar tu visa 417/462.
+              <ShieldCheck size={14} style={{ verticalAlign: '-2px' }} /> {t('modal.specNote')}
             </p>
           )}
         </div>
 
         <div className="modal-section">
-          <h4>Fuente y estado</h4>
+          <h4>{t('modal.sourceTitle')}</h4>
           <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--muted)' }}>
-            Fuente: {job.source} · Aportado por: {job.addedBy === 'comunidad' ? 'la comunidad' : 'el equipo'}
+            {t('modal.source', {
+              source: job.source,
+              by: job.addedBy === 'comunidad' ? t('modal.byCommunity') : t('modal.byTeam'),
+            })}
           </p>
           {onDelete && (
             <button className="btn btn-sm btn-danger" onClick={onDelete} style={{ marginTop: 12 }}>
-              <Trash2 size={14} /> Eliminar este aporte
+              <Trash2 size={14} /> {t('modal.deleteBtn')}
             </button>
           )}
         </div>

@@ -1,14 +1,6 @@
 import { Sprout } from 'lucide-react';
 import { Tab } from '../data/types';
-
-const NAV: { id: Tab; label: string }[] = [
-  { id: 'inicio', label: 'Inicio' },
-  { id: 'mapa', label: 'Mapa' },
-  { id: 'wiki', label: 'Wiki' },
-  { id: 'agregar', label: 'Agregar' },
-  { id: 'donar', label: 'Donar' },
-  { id: 'sobre', label: 'Sobre' },
-];
+import { LANGS, useI18n } from '../i18n/LanguageContext';
 
 export default function Header({
   tab,
@@ -19,6 +11,17 @@ export default function Header({
   onTab: (t: Tab) => void;
   communityCount: number;
 }) {
+  const { t, lang, setLang } = useI18n();
+
+  const NAV: { id: Tab; label: string }[] = [
+    { id: 'inicio', label: t('nav.home') },
+    { id: 'mapa', label: t('nav.map') },
+    { id: 'wiki', label: t('nav.wiki') },
+    { id: 'agregar', label: t('nav.add') },
+    { id: 'donar', label: t('nav.donate') },
+    { id: 'sobre', label: t('nav.about') },
+  ];
+
   return (
     <header className="site-header">
       <div className="container header-inner">
@@ -41,7 +44,20 @@ export default function Header({
             </button>
           ))}
         </nav>
-        <span className="pill">{communityCount} aportes de la comunidad</span>
+        <div className="lang-switch" role="group" aria-label={t('lang.label')}>
+          {LANGS.map((l) => (
+            <button
+              key={l.code}
+              className={`lang-btn ${lang === l.code ? 'active' : ''}`}
+              title={l.label}
+              aria-label={l.label}
+              onClick={() => setLang(l.code)}
+            >
+              {l.native}
+            </button>
+          ))}
+        </div>
+        <span className="pill">{t('header.communityPill', { n: communityCount })}</span>
       </div>
     </header>
   );

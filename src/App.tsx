@@ -12,9 +12,11 @@ import JobDetailModal from './components/JobDetailModal';
 import SeasonBar from './components/SeasonBar';
 import FilterBar from './components/FilterBar';
 import { useJobs } from './hooks/useJobs';
-import { inSeason, JobListing, MONTHS_SHORT, StateCode, Tab, WorkType } from './data/types';
+import { inSeason, JobListing, StateCode, Tab, WorkType } from './data/types';
+import { useI18n } from './i18n/LanguageContext';
 
 export default function App() {
+  const { t, monthsShort } = useI18n();
   const { jobs, addJob, removeJob } = useJobs();
   const [tab, setTab] = useState<Tab>('inicio');
   const [month, setMonth] = useState<number | null>(null);
@@ -31,7 +33,22 @@ export default function App() {
       if (stateF !== 'ALL' && j.state !== stateF) return false;
       if (workF !== 'ALL' && !j.workTypes.includes(workF)) return false;
       if (onlySpecified && !j.specifiedWork) return false;
-      if (q && !`${j.name} ${j.town} ${j.crop} ${j.state}`.toLowerCase().includes(q)) return false;
+      if (q) {
+        const hay = [
+          j.name,
+          j.nameEn,
+          j.namePt,
+          j.town,
+          j.state,
+          j.crop,
+          j.cropEn,
+          j.cropPt,
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
       return true;
     });
   }, [jobs, month, stateF, workF, query, onlySpecified]);
@@ -96,7 +113,7 @@ export default function App() {
             />
             {month !== null && (
               <p className="seasonbar-hint">
-                {filtered.length} zona(s) activa(s) en {MONTHS_SHORT[month]}.
+                {t('map.activeHint', { n: filtered.length, month: monthsShort[month] })}
               </p>
             )}
             <FarmMap jobs={filtered} onSelect={setSelected} />
@@ -118,11 +135,11 @@ export default function App() {
             />
             <div className="wiki-head">
               <p>
-                Mostrando {filtered.length} de {jobs.length} trabajos
-                {month !== null && ` · temporada de ${MONTHS_SHORT[month]}`}
+                {t('wiki.showing', { shown: filtered.length, total: jobs.length })}
+                {month !== null && t('wiki.seasonSuffix', { month: monthsShort[month] })}
               </p>
               <button className="btn btn-outline btn-sm" onClick={exportData}>
-                <Download size={14} /> Exportar JSON
+                <Download size={14} /> {t('wiki.export')}
               </button>
             </div>
             <WikiList jobs={filtered} onSelect={setSelected} />

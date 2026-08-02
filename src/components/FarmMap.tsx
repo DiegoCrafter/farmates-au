@@ -1,8 +1,9 @@
 import { CalendarDays, MapPin } from 'lucide-react';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import L from 'leaflet';
-import { JobListing, WORK_TYPE_LABELS, WorkType, monthRangeLabel } from '../data/types';
+import { JobListing, WorkType } from '../data/types';
 import { WORK_TYPE_COLORS } from '../data/jobs';
+import { useI18n } from '../i18n/LanguageContext';
 
 function iconFor(wt: WorkType) {
   return L.divIcon({
@@ -21,6 +22,7 @@ export default function FarmMap({
   jobs: JobListing[];
   onSelect: (j: JobListing) => void;
 }) {
+  const { t, workTypeLabels, monthRangeLabel, localizedName, localizedCrop } = useI18n();
   return (
     <div>
       <div className="map-shell">
@@ -38,16 +40,16 @@ export default function FarmMap({
             <Marker key={j.id} position={[j.lat, j.lng]} icon={iconFor(j.workTypes[0])}>
               <Popup>
                 <div className="fm-popup">
-                  <strong>{j.name}</strong>
+                  <strong>{localizedName(j)}</strong>
                   <span className="fm-popup-meta">
-                    <MapPin size={12} /> {j.town}, {j.state} · {j.crop}
+                    <MapPin size={12} /> {j.town}, {j.state} · {localizedCrop(j)}
                   </span>
                   <span className="fm-popup-meta">
-                    <CalendarDays size={12} /> Temporada: {monthRangeLabel(j)}
+                    <CalendarDays size={12} /> {t('map.popupSeason', { label: monthRangeLabel(j) })}
                   </span>
-                  {j.specifiedWork && <span className="chip chip-spec">Visa: trabajo especificado</span>}
+                  {j.specifiedWork && <span className="chip chip-spec">{t('map.popupSpec')}</span>}
                   <button className="btn btn-sm btn-outline" onClick={() => onSelect(j)}>
-                    Ver detalles y contacto
+                    {t('map.popupBtn')}
                   </button>
                 </div>
               </Popup>
@@ -59,7 +61,7 @@ export default function FarmMap({
         {Object.entries(WORK_TYPE_COLORS).map(([k, c]) => (
           <span key={k}>
             <i style={{ background: c }} />
-            {WORK_TYPE_LABELS[k as WorkType]}
+            {workTypeLabels[k as WorkType]}
           </span>
         ))}
       </div>

@@ -1,4 +1,4 @@
-import { MONTHS_SHORT } from '../data/types';
+import { useI18n } from '../i18n/LanguageContext';
 
 export default function SeasonBar({
   month,
@@ -7,10 +7,11 @@ export default function SeasonBar({
   month: number | null;
   onMonthChange: (m: number) => void;
 }) {
+  const { t, monthsShort } = useI18n();
   return (
     <div className="seasonbar-wrap">
       <div className="seasonbar">
-        {MONTHS_SHORT.map((m, i) => (
+        {monthsShort.map((m, i) => (
           <button
             key={m}
             className={`month-btn ${month === i ? 'active' : ''}`}
@@ -22,8 +23,8 @@ export default function SeasonBar({
       </div>
       <p className="seasonbar-hint">
         {month === null
-          ? 'Mostrando todas las temporadas. Toca un mes para ver solo las zonas activas en ese mes.'
-          : `Filtrando por la temporada de ${MONTHS_SHORT[month]}. Toca de nuevo el mes para quitar el filtro.`}
+          ? t('season.hintAll')
+          : t('season.hintMonth', { month: monthsShort[month] })}
       </p>
     </div>
   );

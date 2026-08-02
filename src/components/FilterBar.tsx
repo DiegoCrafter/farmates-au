@@ -1,11 +1,6 @@
 import { Search } from 'lucide-react';
-import {
-  STATE_NAMES,
-  STATE_ORDER,
-  WORK_TYPE_LABELS,
-  StateCode,
-  WorkType,
-} from '../data/types';
+import { STATE_ORDER, StateCode, WorkType } from '../data/types';
+import { useI18n } from '../i18n/LanguageContext';
 
 interface Props {
   stateF: 'ALL' | StateCode;
@@ -30,28 +25,29 @@ export default function FilterBar({
   setQuery,
   showSearch,
 }: Props) {
+  const { t, stateNames, workTypeLabels } = useI18n();
   return (
     <div className="filterbar">
       {showSearch && (
         <input
           className="search"
           type="search"
-          placeholder="Buscar por granja, ciudad o cultivo…"
+          placeholder={t('filter.placeholder')}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
       )}
       <select value={stateF} onChange={(e) => setStateF(e.target.value as 'ALL' | StateCode)}>
-        <option value="ALL">Todos los estados</option>
+        <option value="ALL">{t('filter.allStates')}</option>
         {STATE_ORDER.map((s) => (
           <option key={s} value={s}>
-            {s} · {STATE_NAMES[s]}
+            {s} · {stateNames[s]}
           </option>
         ))}
       </select>
       <select value={workF} onChange={(e) => setWorkF(e.target.value as 'ALL' | WorkType)}>
-        <option value="ALL">Todos los tipos de trabajo</option>
-        {Object.entries(WORK_TYPE_LABELS).map(([k, label]) => (
+        <option value="ALL">{t('filter.allWork')}</option>
+        {Object.entries(workTypeLabels).map(([k, label]) => (
           <option key={k} value={k}>
             {label}
           </option>
@@ -63,7 +59,7 @@ export default function FilterBar({
           checked={onlySpecified}
           onChange={(e) => setOnlySpecified(e.target.checked)}
         />
-        Solo trabajo especificado (visa)
+        {t('filter.onlySpecified')}
       </label>
       {showSearch && (
         <span style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>
