@@ -21,7 +21,9 @@ contacts, and contribute farms you have actually worked at to help travellers co
 - **Donations section**: PayPal / Ko-fi / Buy Me a Coffee links, centralized in one config file
 - **Visa guidance** on the home page: 88 days specified work (2nd year) / 179 days (3rd year),
   with links to official sources
-- Built-in **Spanish UI** for the Latin American backpacker community
+- **Trilingual UI**: Spanish, English and Portuguese — switch anytime with the ES/EN/PT selector
+  in the header; language is detected from the browser on first visit and remembered between
+  sessions
 
 ## Tech Stack
 
@@ -49,6 +51,17 @@ npm run build
 
 > The map tiles are served by OpenStreetMap, so the map view requires an internet connection.
 
+## Languages
+
+- **ES / EN / PT**: the whole UI — navigation, map, filters, forms, donation and about pages — is
+  available in Spanish, English and Portuguese. Switch with the ES/EN/PT selector in the header.
+- On first visit the language is detected from your browser (`navigator.language`) and remembered
+  in `localStorage` under the key `farmates.lang`.
+- Seed catalogue entries carry optional per-language fields (`nameEn`, `cropPt`, `descriptionEn`,
+  …); the base fields are shown in Spanish and the localized variants in EN/PT when present.
+- Community contributions added through the form are stored in the language the form was filled in
+  at the time (they keep their original text, like real-world user content).
+
 ## Project Structure
 
 ```
@@ -62,6 +75,9 @@ src/
 │   └── config.ts           # Donation links — put YOUR links here
 ├── hooks/
 │   └── useJobs.ts          # Seed + community entries, persisted in localStorage
+├── i18n/
+│   ├── translations.ts     # ES/EN/PT dictionaries (UI strings, months, states, resources)
+│   └── LanguageContext.tsx # LanguageProvider + useI18n() hook
 └── components/
     ├── Home.tsx            # Landing page (stats, how it works, official resources)
     ├── FarmMap.tsx         # Leaflet map with popups
@@ -93,11 +109,15 @@ Append a `JobListing` object to `SEED_JOBS` (copy any entry as a template). Requ
 | `specifiedWork` | Whether it counts as specified work for visas 417/462 |
 | `verified` | `true` only for confirmed/official contacts |
 
+Optional translation fields (used when the UI language is EN or PT; the base field is shown in ES):
+`nameEn`/`namePt`, `cropEn`/`cropPt`, `descriptionEn`/`descriptionPt`,
+`accommodationEn`/`accommodationPt`.
+
 ### Community contributions
 
-Travellers add farms through the "Agregar" tab. Entries persist in `localStorage`
-(`farmwiki.community.v1`), are marked as **unverified**, and can be exported as JSON from the
-Wiki tab or deleted by their contributor.
+Travellers add farms through the "Add" tab ("Agregar" / "Adicionar" depending on the UI language).
+Entries persist in `localStorage` (`farmwiki.community.v1`), are marked as **unverified**, and can
+be exported as JSON from the Wiki tab or deleted by their contributor.
 
 ## Donations
 
